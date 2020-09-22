@@ -98,6 +98,7 @@ const getSelectedLayer = state => {
 };
 const layerFilterSelector = (state) => state.layers && state.layers.filter || '';
 const layerSettingSelector = (state) => state.layers && state.layers.settings || {expanded: false, options: {opacity: 1}};
+const layerSwipeSettingsSelector = (state) => state.layers && state.layers.swipeSettings || { show: false };
 const layerMetadataSelector = (state) => state.layers && state.layers.layerMetadata || {expanded: false, metadataRecord: {}, maskLoading: false};
 const wfsDownloadSelector = (state) => state.controls && state.controls.wfsdownload ? { expanded: state.controls.wfsdownload.enabled } : {expanded: false};
 
@@ -124,10 +125,12 @@ const getLayersWithDimension = (state, dimension) =>
 */
 const elementSelector = (state) => {
     const settings = layerSettingSelector(state);
+    const swipeSettings = layerSwipeSettingsSelector(state);
     const layers = layersSelector(state);
     const groups = groupsSelector(state);
     return settings.nodeType === 'layers' && isArray(layers) && head(layers.filter(layer => layer.id === settings.node)) ||
-    settings.nodeType === 'groups' && isArray(groups) && head(flattenGroups(groups, 0, true).filter(group => group.id === settings.node)) || {};
+    settings.nodeType === 'groups' && isArray(groups) && head(flattenGroups(groups, 0, true).filter(group => group.id === settings.node)) ||
+    swipeSettings.nodeType === 'layers' && isArray(layers) && head(layers.filter(layer => layer.id === swipeSettings.node)) || {};
 };
 /**
 * Select queriable layers
@@ -164,6 +167,7 @@ module.exports = {
     getSelectedLayers,
     layerFilterSelector,
     layerSettingSelector,
+    layerSwipeSettingsSelector,
     layerMetadataSelector,
     wfsDownloadSelector,
     backgroundControlsSelector,

@@ -203,7 +203,8 @@ class MapPlugin extends React.Component {
         elevationEnabled: PropTypes.bool,
         isLocalizedLayerStylesEnabled: PropTypes.bool,
         localizedLayerStylesName: PropTypes.string,
-        currentLocaleLanguage: PropTypes.string
+        currentLocaleLanguage: PropTypes.string,
+        items: PropTypes.array
     };
 
     static defaultProps = {
@@ -240,7 +241,8 @@ class MapPlugin extends React.Component {
         shouldLoadFont: false,
         elevationEnabled: false,
         onFontError: () => {},
-        onResolutionsChange: () => {}
+        onResolutionsChange: () => {},
+        items: []
     };
     state = {
         canRender: true
@@ -363,6 +365,7 @@ class MapPlugin extends React.Component {
     };
 
     render() {
+        console.log("ITEMS", this.props.items);
         if (this.props.map && this.state.canRender) {
             const {mapOptions = {}} = this.props.map;
 
