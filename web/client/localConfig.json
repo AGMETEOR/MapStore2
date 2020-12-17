@@ -305,7 +305,7 @@
                 }
               }
             }
-          }, "AutoMapUpdate", "HelpLink", "DrawerMenu", "Version", "Notifications", "BackgroundSelector", "Swipe", {
+          }, "AutoMapUpdate", "HelpLink", "DrawerMenu", "Version", "Notifications", "BackgroundSelector", "Swipe", "Urbanisme", {
             "name": "Annotations",
             "cfg": {
               "measurementAnnotationEdit": false
@@ -335,6 +335,14 @@
                   }
                 }
             },
+            {
+              "name": "Nru",
+              "override": {
+                  "Urbanisme": {
+                      "alwaysVisible": true
+                  }
+              }
+          },
             {
                 "name": "Locate",
                 "override": {
