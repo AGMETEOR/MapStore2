@@ -55,9 +55,9 @@ class UrbanismeToolbar extends React.Component {
         const hidableItems = combinedItemTools.filter((item) => !item.alwaysVisible) || [];
         const unsorted = combinedItemTools
             .filter((item) =>
-                item.alwaysVisible // items not hidden (by expander)
-                || hidableItems.length === 1) // if the item is only one, the expander will not show, instead we have only the item
-            .filter(item => item.showWhen ? item.showWhen(this.props) : true) // optional display option (used by expander, that depends on other)
+                item.alwaysVisible
+                || hidableItems.length === 1) // TODO: Refactor and remove unnecessary filter
+            .filter(item => item.showWhen ? item.showWhen(this.props) : true)
             .map((item, index) => assign({}, item, {position: item.position || index}));
         return unsorted.sort((a, b) => a.position - b.position);
     };
