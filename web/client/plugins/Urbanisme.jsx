@@ -10,6 +10,7 @@ import React from 'react';
 import {Glyphicon} from 'react-bootstrap';
 import assign from 'object-assign';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import ToolsContainer from './containers/ToolsContainer';
 import Message from '../components/I18N/Message';
@@ -25,18 +26,34 @@ class Container extends React.Component {
     }
 }
 
-class Urbanisme extends React.Component {
+class UrbanismeToolbar extends React.Component {
     static propTypes = {
+        enabled: PropTypes.boolean,
         items: PropTypes.array
     }
     static defaultProps = {
+        enabled: false,
         items: []
     }
 
     getTools = () => {
-        console.log("THE ITEMS", this.props.items);
-        const hidableItems = this.props.items.filter((item) => !item.alwaysVisible) || [];
-        const unsorted = this.props.items
+        const tools = [
+            {
+                alwaysVisible: true,
+                name: "NRU",
+                cfg: {},
+                items: [],
+                position: 3,
+                priority: 1,
+                tool: false,
+                action: toggleControl.bind(null, 'urbanisme', null),
+                icon: <Glyphicon glyph="remove" />,
+                help: <Message msgId="helptexts.zoomToMaxExtentButton"/>
+            }
+        ];
+        const combinedItemTools = [...this.props.items, ...tools ];
+        const hidableItems = combinedItemTools.filter((item) => !item.alwaysVisible) || [];
+        const unsorted = combinedItemTools
             .filter((item) =>
                 item.alwaysVisible // items not hidden (by expander)
                 || hidableItems.length === 1) // if the item is only one, the expander will not show, instead we have only the item
@@ -59,7 +76,8 @@ class Urbanisme extends React.Component {
         const btnConfig = {
             className: "square-button"
         };
-        return (<ToolsContainer
+
+        return this.props.enabled ? (<ToolsContainer
             id="urbanisme"
             className="urbanismeToolbar btn-group-horizontal"
             container={Container}
@@ -68,83 +86,14 @@ class Urbanisme extends React.Component {
             panelStyle={panelStyle}
             toolCfg={btnConfig}
             tools={this.getTools()}
-            panels={[]} />);
+            panels={[]} />) : null;
     }
 
 }
 
-// const Urbanisme = () => {
-//     const panelStyle = {
-//         minWidth: "300px",
-//         right: "450px",
-//         zIndex: 100,
-//         position: "absolute",
-//         overflow: "auto",
-//         left: "52px",
-//         top: "52px"
-//     };
-
-//     const btnConfig = {
-//         className: "square-button"
-//     };
-
-//     const tools = [
-//         {
-//             alwaysVisible: true,
-//             name: "NRU",
-//             cfg: {},
-//             items: [],
-//             position: 1,
-//             priority: 1,
-//             tool: false,
-//             icon: <Glyphicon glyph="zoom-to" />,
-//             help: <Message msgId="helptexts.zoomToMaxExtentButton"/>
-//         },
-//         {
-//             alwaysVisible: true,
-//             name: "NRU",
-//             cfg: {},
-//             items: [],
-//             position: 2,
-//             priority: 1,
-//             tool: false,
-//             icon: <Glyphicon glyph="info-sign" />,
-//             help: <Message msgId="helptexts.zoomToMaxExtentButton"/>
-//         },
-//         {
-//             alwaysVisible: true,
-//             name: "NRU",
-//             cfg: {},
-//             items: [],
-//             position: 3,
-//             priority: 1,
-//             tool: false,
-//             icon: <Glyphicon glyph="question-sign" />,
-//             help: <Message msgId="helptexts.zoomToMaxExtentButton"/>
-//         },
-//         {
-//             alwaysVisible: true,
-//             name: "NRU",
-//             cfg: {},
-//             items: [],
-//             position: 3,
-//             priority: 1,
-//             tool: false,
-//             icon: <Glyphicon glyph="remove" />,
-//             help: <Message msgId="helptexts.zoomToMaxExtentButton"/>
-//         }
-//     ];
-//     return (<ToolsContainer
-//         id="urbanisme"
-//         className="urbanismeToolbar btn-group-horizontal"
-//         container={Container}
-//         toolStyle="primary"
-//         activeStyle="success"
-//         panelStyle={panelStyle}
-//         toolCfg={btnConfig}
-//         tools={tools}
-//         panels={[]} />);
-// };
+const Urbanisme = connect((state) => ({
+    enabled: state.controls && state.controls.urbanisme && state.controls.urbanisme.enabled || false
+}))(UrbanismeToolbar);
 
 const UrbanismeCompDefinition = {
     component: Urbanisme,
