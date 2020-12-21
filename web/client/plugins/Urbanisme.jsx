@@ -16,6 +16,9 @@ import ToolsContainer from './containers/ToolsContainer';
 import Message from '../components/I18N/Message';
 import { createPlugin } from '../utils/PluginsUtils';
 import { toggleControl } from '../actions/controls';
+import { getPlanningLayer } from '../actions/urbanisme';
+import API from '../api/catalog';
+import urbanismeEpic from '../epics/urbanisme';
 
 class Container extends React.Component {
     render() {
@@ -29,11 +32,23 @@ class Container extends React.Component {
 class UrbanismeToolbar extends React.Component {
     static propTypes = {
         enabled: PropTypes.boolean,
-        items: PropTypes.array
+        items: PropTypes.array,
+        onGetPlanningLayer: PropTypes.func
     }
     static defaultProps = {
         enabled: false,
-        items: []
+        items: [],
+        onGetPlanningLayer: () => {}
+    }
+
+    componentDidMount() {
+        const url = "https://georchestra.geo-solutions.it:443/geoserver/qgis/ows?SERVICE=WMS&REQUEST=GetCapabilities";
+        this.props.onGetPlanningLayer({
+            format: "wms",
+            url,
+            startPosition: 1,
+            maxRecords: 1,
+            text: "urbanisme_parcelle" });
     }
 
     getTools = () => {
@@ -93,7 +108,9 @@ class UrbanismeToolbar extends React.Component {
 
 const Urbanisme = connect((state) => ({
     enabled: state.controls && state.controls.urbanisme && state.controls.urbanisme.enabled || false
-}))(UrbanismeToolbar);
+}), {
+    onGetPlanningLayer: getPlanningLayer
+})(UrbanismeToolbar);
 
 const UrbanismeCompDefinition = {
     component: Urbanisme,
@@ -107,7 +124,8 @@ const UrbanismeCompDefinition = {
             doNotHide: true,
             priority: 2
         }
-    }
+    },
+    epics: urbanismeEpic(API) // using catalog API
 };
 
 export default createPlugin("Urbanisme", UrbanismeCompDefinition);
