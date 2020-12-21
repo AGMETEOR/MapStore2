@@ -19,6 +19,7 @@ import { toggleControl } from '../actions/controls';
 import { getPlanningLayer } from '../actions/urbanisme';
 import API from '../api/catalog';
 import urbanismeEpic from '../epics/urbanisme';
+import urbanismeReducer from '../reducers/urbanisme';
 
 class Container extends React.Component {
     render() {
@@ -125,7 +126,10 @@ const UrbanismeCompDefinition = {
             priority: 2
         }
     },
-    epics: urbanismeEpic(API) // using catalog API
+    epics: urbanismeEpic(API), // using catalog API
+    reducers: {
+        urbanisme: urbanismeReducer
+    }
 };
 
 export default createPlugin("Urbanisme", UrbanismeCompDefinition);

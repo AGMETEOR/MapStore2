@@ -8,12 +8,28 @@
 
 import * as Rx from 'rxjs';
 
-import { GET_PLANNING_LAYER } from '../actions/urbanisme';
+import { GET_PLANNING_LAYER, savePlanningLayer } from '../actions/urbanisme';
 import { addLayer } from '../actions/catalog';
+import { removeNode } from '../actions/layers';
+import { TOGGLE_CONTROL } from '../actions/controls';
 import { recordToLayer, getCatalogRecords } from '../utils/CatalogUtils';
 import { authkeyParamNameSelector } from '../selectors/catalog';
+import { urbanismeLayerSelector } from '../selectors/urbanisme';
 
 export default (API) => ({
+    toggleLandPlanningEpic: (action$, store) =>
+        action$.ofType(TOGGLE_CONTROL)
+            .filter(({ control }) => control === "urbanisme")
+            .switchMap(() => {
+                const state = store.getState();
+                const enabled = state.controls && state.controls.urbanisme && state.controls.urbanisme.enabled || false;
+                let layer = urbanismeLayerSelector(state);
+                layer = {...layer, id: "URNABISME" };
+                if (enabled) {
+                    return Rx.Observable.of(addLayer(layer, { zoomToLayer: true }));
+                }
+                return Rx.Observable.of(removeNode(layer.id || layer.title, "layers"));
+            }),
     getPlanningLayerEpic: (action$, store) =>
         action$.ofType(GET_PLANNING_LAYER)
             .switchMap(({ format, url, startPosition, maxRecords, text }) => {
@@ -36,7 +52,7 @@ export default (API) => ({
                             records[0].identifier
                         }
                     );
-                    return Rx.Observable.of(addLayer(layer, { zoomToLayer: true }));
+                    return Rx.Observable.of(savePlanningLayer(layer));
                 });
             })
 });

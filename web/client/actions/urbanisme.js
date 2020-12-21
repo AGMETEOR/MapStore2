@@ -7,6 +7,7 @@
 */
 
 export const GET_PLANNING_LAYER = "URBANISME:GET_PLANNING_LAYER";
+export const SAVE_PLANNING_LAYER = "URBANISME:SAVE_PLANNING_LAYER";
 
 export function getPlanningLayer({format, url, startPosition, maxRecords, text, options = {}} = {}) {
     return {
@@ -17,5 +18,11 @@ export function getPlanningLayer({format, url, startPosition, maxRecords, text, 
         maxRecords,
         text,
         options
+    };
+}
+export function savePlanningLayer(layer) {
+    return {
+        type: SAVE_PLANNING_LAYER,
+        layer
     };
 }
